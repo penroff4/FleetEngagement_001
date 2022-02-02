@@ -1,0 +1,8 @@
+SURPRISE LEVEL,RESULT
+1,Surprise achieved.  The defender does not receive a +1 DRM in air combat between attacking air units and air units flying combat air patrol.
+2,Anti-aircraft defenses less effective. The defender’s air defense level is reduced by one.
+3,Damage control problems. The attacker receives a +1 DRM on his air attack dice rolls against enemy naval units.
+4,One fewer defending air squadron engages the attacking naval air.
+5,Two fewer defending air squadrons engage the attacking naval air.
+6,Three fewer defending air squadrons engage the attacking naval air.
+7,Four fewer defending air squadrons engage the attacking naval air. Air attacks which damage a named ship trigger a critical hit die roll against the target (20.524).
