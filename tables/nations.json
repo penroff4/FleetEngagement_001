@@ -1,0 +1,30 @@
+{
+    "Germany": {
+        "Flag": "./assets/awaw_images/german/German_Marker_Flag.png", 
+        "Adjective": "German"
+    },
+    "Japan": { 
+        "Flag": "./assets/awaw_images/japan/Japan_Marker_Flag.png", 
+        "Adjective": "Japanese"
+    },
+    "Italy": { 
+        "Flag": "./assets/awaw_images/italy/Italy_Marker_Flag.png", 
+        "Adjective": "Italian"
+    },
+    "Commonwealth": { 
+        "Flag": "./assets/awaw_images/commonwealth/Brit_Marker_Flag.png",
+        "Adjective": "Commonwealth"
+    },
+    "France": {
+        "Flag": "./assets/awaw_images/france/France_Marker_Flag.png", 
+        "Adjective": "French"
+        },
+    "Russia":{
+        "Flag": "./assets/awaw_images/russia/Russia_Marker_Flag.png", 
+        "Adjective": "Russian"
+        },
+    "United States":{ 
+        "Flag": "./assets/awaw_images/usa/US_Marker_Flag.png", 
+        "Adjective": "American"
+    }
+}
