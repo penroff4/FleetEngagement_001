@@ -1,11 +1,12 @@
 import pygame
+import pygame_textinput
+
 import sys
 import logging
 import pandas
 import json
 
 from button import Button
-from inputbox import InputBox
 
 logging.basicConfig(
     filename="LogFleetEngagement.log",
@@ -18,15 +19,14 @@ logging.basicConfig(
 ############################## PYGAME VARS #####################################
 pygame.init()
 
-CLOCK = pygame.time.Clock()
-CLOCK.tick(60)
+BACKGROUND = pygame.image.load("./assets/Background.png")
 
-SCREEN_HEIGHT = 1280
-SCREEN_WIDTH = 720
+FPS = 60
 
+SCREEN_HEIGHT, SCREEN_WIDTH = 1280, 720
 SCREEN = pygame.display.set_mode((SCREEN_HEIGHT, SCREEN_WIDTH))
 
-BACKGROUND = pygame.image.load("./assets/Background.png")
+WHITE = (255,255,255)
 
 ############################## FLEET ENGAGEMENT VARS ###########################
 
@@ -43,14 +43,55 @@ COMBAT_METHODS_LIST = [
     'NONE',
 ]
 
+# Set up NATIONS_DICT_LIST var
 with open("./tables/nations.json") as json_file:
     NATIONS_DICT_LIST = json.load(json_file)
 
-############################## GLOBAL METHODS ##################################
+################################ GLOBAL METHODS ################################
 
 def get_font(size):
+    """Returns pygame.font.Font object using ./assets/font.ttf, using size"""
     return pygame.font.Font("./assets/font.ttf", size)
-         
+
+def draw_window(color):
+    """color should be rgb tuple e.g. (255,255,255)"""
+    SCREEN.fill(color)
+    pygame.display.update()
+
+################################### CLASSES ####################################
+
+class Combatant(object):
+    """i.e. a player, or nation; handles combatant details"""
+    def __init__(self, short_designation):
+        self.short_designation_str = short_designation
+        self.nation_str = None
+        self.national_adjective_str = None
+        self.flag_str = None
+        self.fleet_composition_list = []
+        self.round_search_results_int = 0
+        self.search_rolls_list = []
+        self.withdrawal_decision_bool = None
+        self.allocated_search_results_list = []
+
+
+class FleetEngagement(object):
+    """
+    a fleet engagement between two nationalities, 
+    generates TFs as well as ship composition of those TFs
+    """
+
+    def __init__(self):
+
+        sideA = Combatant("sideA")
+        sideB = Combatant("sideB")
+
+        self.combatants_list = [
+            sideA,
+            sideB
+        ]
+
+################################# MENU METHODS #################################
+
 def choose_nations(engagement):
     """shows player nations they can choose to play as"""
 
@@ -216,45 +257,43 @@ def choose_fleet_comp(engagement):
 
             SCREEN.blit(BACKGROUND, (0,0))
 
-            MENU_MOUSE_POS = pygame.mouse.get_pos()
-
             logging.info("setting PLAYER_TITLE, PLAYER_TITLE_RECT")
             
-            PLAYER_TITLE = get_font(50).render("Player {}...".format(combatant_count), True, "White")
+            PLAYER_TITLE = get_font(50).render(
+                "Player {}...".format(combatant_count), True, "White")
             PLAYER_TITLE_RECT = PLAYER_TITLE.get_rect(center=(640,50))
 
             logging.info("setting MENU_TEXT, MENU_RECT")
-            MENU_TEXT = get_font(30).render("Enter number of Taskforces", True, "White")
+            MENU_TEXT = get_font(30).render(
+                "Enter number of Taskforces", True, "White")
             MENU_RECT = MENU_TEXT.get_rect(center=(640,150))
 
-            PLAYER_INPUT_RECT = InputBox(
-                510,370, 140, 32, get_font(30), 
-                pygame.Color(0,0,0), pygame.Color(255,255,0), text='')
+            PLAYER_INPUT = pygame_textinput.TextInputVisualizer(
+                font_object=get_font(30), font_color=WHITE)
 
-            logging.info("blit-ing MENU_TEXT, MENU_RECT")
+            logging.info(
+                "blit-ing PLAYER_TITLE, PLAYER_TITLE_RECT, MENU_TEXT, MENU_RECT")
             SCREEN.blit(PLAYER_TITLE, PLAYER_TITLE_RECT)
             SCREEN.blit(MENU_TEXT, MENU_RECT)
 
+            logging.info("setting events = pygame.event.get()")
             events = pygame.event.get()
+
+            logging.info("calling PLAYER_INPUT.update(events)")
+            PLAYER_INPUT.update(events)
             
+            logging.info("blit'ing PLAYER_INPUT.surface")
+            SCREEN.blit(PLAYER_INPUT.surface, (10,10))
+
             for event in events:
 
                 if event.type == pygame.QUIT:
                     logging.info("event.type triggered pygame.QUIT")
                     pygame.quit()
                     sys.exit()
-
-                PLAYER_INPUT_RECT.handle_event(event)
-
-                #if event.type == pygame.MOUSEBUTTONDOWN:
-                #    pass
-            
-            PLAYER_INPUT_RECT.update()
-            PLAYER_INPUT_RECT.draw(SCREEN)
         
             logging.info("pygame.display.update()")
-            #pygame.display.update()
-            pygame.display.flip()
+            pygame.display.update()
 
 def main_menu(engagement):
 
@@ -322,46 +361,29 @@ def main_menu(engagement):
         #pygame.display.update()
         pygame.display.flip()
 
-############################## CLASSES #########################################
+##################################### MAIN #####################################
+def main():
 
-class Combatant(object):
-    """i.e. a player, or nation; handles combatant details"""
-    def __init__(self, short_designation):
-        self.short_designation_str = short_designation
-        self.nation_str = None
-        self.national_adjective_str = None
-        self.flag_str = None
-        self.fleet_composition_list = []
-        self.round_search_results_int = 0
-        self.search_rolls_list = []
-        self.withdrawal_decision_bool = None
-        self.allocated_search_results_list = []
+    logging.info("Instantiating Fleet Engagement object")
+    engagement = FleetEngagement()
 
+    CLOCK = pygame.time.Clock()
 
-class FleetEngagement(object):
-    """
-    a fleet engagement between two nationalities, 
-    generates TFs as well as ship composition of those TFs
-    """
+    run = True
+    while run is True:
 
-    def __init__(self):
-
-        sideA = Combatant("sideA")
-        sideB = Combatant("sideB")
-
-        self.combatants_list = [
-            sideA,
-            sideB
-        ]
+        CLOCK.tick(60)
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+        
+        # draw_window(WHITE)
+        logging.info("calling main_menu")
+        main_menu(engagement)
 
 ############################## IF __MAIN__ #####################################
 if __name__ == "__main__":
     
     logging.info("FleetEngagement.py executed as __main__")
-    
-    logging.info("Instantiating Fleet Engagement object")
-    engagement = FleetEngagement()
-    
-    while True:
-        logging.info("calling main_menu")
-        main_menu(engagement)
+    main()
