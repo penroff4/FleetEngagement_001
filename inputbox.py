@@ -14,6 +14,10 @@ class InputBox(object):
         self.font = font
 
     def handle_event(self, event):
+        """
+        if MOUSEBUTTONDOWN, check rect collidepoint for active state
+        if KEYDOWN and is active, print text
+        """
         if event.type == pygame.MOUSEBUTTONDOWN:
             # If the user clicked on the input_box rect
             if self.rect.collidepoint(event.pos):
@@ -52,4 +56,3 @@ class InputBox(object):
         screen.blit(self.txt_surface, (self.rect.x+5, self.rect.y+5))
         # blit the rect
         pygame.draw.rect(screen, self.color, self.rect, 2)
-

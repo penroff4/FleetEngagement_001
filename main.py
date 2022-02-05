@@ -7,6 +7,8 @@ import json
 from button import Button
 from inputbox import InputBox
 
+
+############################## LOGGING VARS ####################################
 logging.basicConfig(
     filename="LogFleetEngagement.log",
     filemode="w",
@@ -18,8 +20,8 @@ logging.basicConfig(
 ############################## PYGAME VARS #####################################
 pygame.init()
 
+FPS = 30
 CLOCK = pygame.time.Clock()
-CLOCK.tick(60)
 
 SCREEN_HEIGHT = 1280
 SCREEN_WIDTH = 720
@@ -50,7 +52,9 @@ with open("./tables/nations.json") as json_file:
 
 def get_font(size):
     return pygame.font.Font("./assets/font.ttf", size)
-         
+
+############################## GLOBAL MENU METHODS #############################
+
 def choose_nations(engagement):
     """shows player nations they can choose to play as"""
 
@@ -228,7 +232,7 @@ def choose_fleet_comp(engagement):
             MENU_RECT = MENU_TEXT.get_rect(center=(640,150))
 
             PLAYER_INPUT_RECT = InputBox(
-                510,370, 140, 32, get_font(30), 
+                510,370, 140, 32, get_font(12), 
                 pygame.Color(0,0,0), pygame.Color(255,255,0), text='')
 
             logging.info("blit-ing MENU_TEXT, MENU_RECT")
@@ -245,15 +249,11 @@ def choose_fleet_comp(engagement):
                     sys.exit()
 
                 PLAYER_INPUT_RECT.handle_event(event)
-
-                #if event.type == pygame.MOUSEBUTTONDOWN:
-                #    pass
             
             PLAYER_INPUT_RECT.update()
             PLAYER_INPUT_RECT.draw(SCREEN)
         
             logging.info("pygame.display.update()")
-            #pygame.display.update()
             pygame.display.flip()
 
 def main_menu(engagement):
@@ -365,3 +365,5 @@ if __name__ == "__main__":
     while True:
         logging.info("calling main_menu")
         main_menu(engagement)
+
+        CLOCK.tick(FPS)
